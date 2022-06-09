@@ -12,7 +12,6 @@ export class CreateAuthorizations1654136856131 implements MigrationInterface {
                     { name: "state", type: "varchar" },
                     { name: "expirationDate", type: "Date" },
                     { name: "serialNumber", type: "varchar" },
-                    { name: "cpf", type: "varchar" },
                     { name: "status", type: "BIT", default: 1 },
                     { name: "created_at", type: "datetime", default: "GETDATE()" },
                 ]

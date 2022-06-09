@@ -10,9 +10,9 @@ auhtorizationRoutes.post("/createAuthorization", (req, res) => createAuthorizati
 
 auhtorizationRoutes.get("/", (req, res) => listAuthorizationController().handle(req, res));
 
-auhtorizationRoutes.post("/getAuthorization", (req, res) => userAuthorizationController().handle(req, res));
+auhtorizationRoutes.post("/getAuthorization", (req, res) => userAuthorizationController().handle(req, res)); //Pegar usuário pelo cpf (STATE)
 
-auhtorizationRoutes.put("/", (req, res) => updateAuthorizationController().handle(req, res)); //updateAuthorization
+auhtorizationRoutes.put("/", (req, res) => updateAuthorizationController().handle(req, res)); //updateAuthorization => rota que o safeweb irá utilizar
 
 export { auhtorizationRoutes };
 

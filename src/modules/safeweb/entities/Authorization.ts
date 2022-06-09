@@ -13,8 +13,6 @@ class Authorization {
     @Column()
     serialNumber: string;
     @Column()
-    cpf: string;
-    @Column()
     status: number;
     @CreateDateColumn()
     created_at: Date;

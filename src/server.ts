@@ -1,7 +1,9 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
+import "express-async-errors";
 import "./database";
+import { AppError } from './errors/AppError';
 import { router } from './routes';
 
 dotenv.config();
@@ -13,10 +15,18 @@ app.use(cors());
 
 app.use(router);
 
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof AppError) {
+        return res.status(err.statusCode).json({
+            message: err.message
+        });
+    }
 
-app.use('/', (req, res) => {
-    res.json({ msg: 'Rota de teste' })
-});
+    return res.status(500).json({
+        status: "Error",
+        message: `Erro interno do servidor: ${err.message}`
+    })
+})
 
 // https.createServer({
 //     key: fs.readFileSync(path.join(__dirname, 'sslcert', 'pepvita.key'), 'utf8'),

@@ -8,10 +8,10 @@ class UpdateAuthorizationController {
 
     async handle(req: Request, res: Response): Promise<Response | Error> {
 
-        const { identifierCA, state, serialNumber, expirationDate, cpf = "" } = req.body;
+        const { identifierCA, state, serialNumber, expirationDate } = req.body;
 
         try {
-            await this.updateAuthorizationUseCase.execute({ identifierCA, state, serialNumber, expirationDate, cpf });
+            await this.updateAuthorizationUseCase.execute({ identifierCA, state, serialNumber, expirationDate });
         } catch (error) {
             return res.json({ error: "Erro ao fazer o update, verifique todos os parametros" })
         }

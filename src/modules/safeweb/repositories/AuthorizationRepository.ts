@@ -11,14 +11,13 @@ class AuthorizationRepository implements IAuthorizationRepository {
         this.repository = getRepository(Authorization)
     }
 
-    async create({ identifierCA, state, serialNumber, expirationDate, cpf }: IAuthorizationDTO): Promise<void> {
+    async create({ identifierCA, state, serialNumber, expirationDate }: IAuthorizationDTO): Promise<void> {
 
         const authorization = this.repository.create({
             identifierCA,
             state,
             serialNumber,
-            expirationDate,
-            cpf
+            expirationDate
         });
 
         await this.repository.save(authorization);
@@ -30,12 +29,12 @@ class AuthorizationRepository implements IAuthorizationRepository {
     }
 
     async getAuthorization(cpf: string): Promise<Authorization[]> {
-        const authorization = await this.repository.find({ where: { cpf } });
+        const authorization = await this.repository.find({ where: { state: cpf } });
         return authorization
     }
 
-    async updateAuthorization({ identifierCA, state, expirationDate, serialNumber, cpf }: IAuthorizationDTO): Promise<void> {
-        const getAuthorization = await this.repository.find({ where: { cpf } });
+    async updateAuthorization({ identifierCA, state, expirationDate, serialNumber }: IAuthorizationDTO): Promise<void> {
+        const getAuthorization = await this.repository.find({ where: { state } });
 
         const authorization = getAuthorization[0];
 
