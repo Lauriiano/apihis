@@ -5,19 +5,17 @@ interface IRequest {
     serialNumber: string;
     expirationDate: string;
     state: string;
+    error: string;
 }
 
 class UpdateAuthorizationUseCase {
 
     constructor(private authorizationRepository: IAuthorizationRepository) { }
 
-    async execute({ identifierCA, serialNumber, expirationDate, state }: IRequest): Promise<void | Error> {
+    async execute({ identifierCA, serialNumber, expirationDate, state, error }: IRequest): Promise<void | Error> {
 
-        /*if (!identifierCA || !serialNumber || !expirationDate || !state) {
-            throw new AppError("todos os parametros são obrigatórios", 401);
-        }*/
+        this.authorizationRepository.updateAuthorization({ identifierCA, serialNumber, expirationDate, state, error });
 
-        this.authorizationRepository.updateAuthorization({ identifierCA, serialNumber, expirationDate, state });
     }
 
 }

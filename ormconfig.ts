@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = {
+export default {
     "type": "mssql",
     "host": process.env.HOST.toString(),
     "port": parseInt(process.env.PORT_DB),
@@ -19,4 +17,4 @@ exports.default = {
     "options": {
         "encrypt": false
     }
-};
+}

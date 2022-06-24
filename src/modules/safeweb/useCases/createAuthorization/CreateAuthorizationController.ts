@@ -6,11 +6,11 @@ class CreateAuthorizationController {
     constructor(private createAuthorizationUseCase: CreateAuthorizationUseCase) { }
 
     async handle(req: Request, res: Response): Promise<Response> {
-        const { identifierCA = "", serialNumber = "", expirationDate = "", state = "" } = req.body;
+        const { cpf } = req.body;
 
-        await this.createAuthorizationUseCase.execute({ identifierCA, state, expirationDate, serialNumber });
+        await this.createAuthorizationUseCase.execute({ cpf });
 
-        return res.status(201).json({ msg: "Autorização cadastrada com sucesso" });
+        return res.status(201).json({ msg: "CPF cadastrado com sucesso" });
     }
 
 }

@@ -6,17 +6,13 @@ class UpdateAuthorizationController {
 
     constructor(private updateAuthorizationUseCase: UpdateAuthorizationUseCase) { }
 
-    async handle(req: Request, res: Response): Promise<Response | Error> {
+    async handle(req: Request, res: Response): Promise<Response> {
 
-        const { identifierCA, state, serialNumber, expirationDate } = req.body;
+        const { identifierCA = null, state = null, serialNumber = null, expirationDate = null, error = null } = req.body;
 
-        try {
-            await this.updateAuthorizationUseCase.execute({ identifierCA, state, serialNumber, expirationDate });
-        } catch (error) {
-            return res.json({ error: "Erro ao fazer o update, verifique todos os parametros" })
-        }
-        return res.json({ msg: "update realizado sucesso" })
+        const updateAuthorization = this.updateAuthorizationUseCase.execute({ identifierCA, state, serialNumber, expirationDate, error });
 
+        return res.json({ msg: "atualizado com sucesso" });
 
     }
 

@@ -6,13 +6,13 @@ import userAuthorizationController from "../modules/safeweb/useCases/userAuthori
 
 const auhtorizationRoutes = Router();
 
-auhtorizationRoutes.post("/createAuthorization", (req, res) => createAuthorizationController().handle(req, res));
+auhtorizationRoutes.post("/createAuthorization", (req, res) => createAuthorizationController().handle(req, res)); // cadastra o cpf no banco para aguardar resposta da safeweb
 
-auhtorizationRoutes.get("/", (req, res) => listAuthorizationController().handle(req, res));
+auhtorizationRoutes.get("/", (req, res) => listAuthorizationController().handle(req, res)); // lista todas as autorizações ativas
 
-auhtorizationRoutes.post("/getAuthorization", (req, res) => userAuthorizationController().handle(req, res)); //Pegar usuário pelo cpf (STATE)
+auhtorizationRoutes.post("/getAuthorization", (req, res) => userAuthorizationController().handle(req, res)); //Retorna token do usuario se tiver ativo, se nao tiver solicita
 
-auhtorizationRoutes.put("/", (req, res) => updateAuthorizationController().handle(req, res)); //updateAuthorization => rota que o safeweb irá utilizar
+auhtorizationRoutes.post("/", (req, res) => updateAuthorizationController().handle(req, res)); //updateAuthorization => rota que o safeweb irá utilizar
 
 export { auhtorizationRoutes };
 
