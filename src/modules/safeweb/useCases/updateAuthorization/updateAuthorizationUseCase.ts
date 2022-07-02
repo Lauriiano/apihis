@@ -1,6 +1,8 @@
 import { AppError } from "../../../../errors/AppError";
 import { IAuthorizationRepository } from "../../repositories/implementations/IAuthorizationRepository";
-import { safewebapi } from "../../requests/Safeweb.api";
+import { Safewebapi } from "../../requests/Safeweb.api";
+import { fixedCredentialsHolder, urlSafeWeb } from './../../enums/enums';
+
 
 interface IRequest {
     identifierCA: string;
@@ -18,13 +20,21 @@ class UpdateAuthorizationUseCase {
 
         const authorizationUpdated = await this.authorizationRepository.updateAuthorization({ identifierCA, serialNumber, expirationDate, state, error });
 
-        if (authorizationUpdated.identifierCA && authorizationUpdated.serialNumber && authorizationUpdated.expirationDate && authorizationUpdated.state) {
+        if (authorizationUpdated && authorizationUpdated.error == null) {
 
-            const reqToken = await safewebapi.authorizationCredentialsHolder({ username: "TESTE USERNAME", password: "TESTE PASSWORD" });
+            const body = {
+                ...fixedCredentialsHolder,
+                client_id: process.env.CLIENT_ID,
+                client_secret: process.env.CLIENT_SECRET,
+                username: state,
+                password: identifierCA + "igualbad12"
+            }
 
-            const { access_token, token_type, expires_in, slot_alias } = reqToken;
+            const safeRequest = new Safewebapi();
 
-            if (access_token && token_type && expires_in && slot_alias) {
+            const reqToken = await safeRequest.executeRequest({ body, method: "POST", url: urlSafeWeb.AUTHORIZE_CA });
+
+            if (reqToken != null && reqToken != undefined) {
                 await this.authorizationRepository.updateAccessToken({ state: authorizationUpdated.state, ...reqToken });
             } else {
                 throw new AppError("Erro interno de servidor, tente novamente.");

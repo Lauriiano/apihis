@@ -18,7 +18,7 @@ class CreateAuthorizationUseCase {
 
     execute({ cpf }: IRequest): void {
 
-        if (cpf === "") { //precisa vir o CPF
+        if (cpf === "") {
             throw new AppError("CPF não enviado");
         }
 

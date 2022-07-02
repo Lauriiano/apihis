@@ -1,14 +1,26 @@
 import { AppError } from "../../../../errors/AppError";
+import { fixedCredentialsHolder, urlSafeWeb } from "../../enums/enums";
 import { IAuthorizationRepository } from "../../repositories/implementations/IAuthorizationRepository";
-import { safewebapi } from '../../requests/Safeweb.api';
+import { Safewebapi } from '../../requests/Safeweb.api';
 
 interface IResponse {
     token: string;
 }
 
+interface IResponseCredentialsHolder {
+    access_token: string;
+    expires_in: number;
+    token_type: string;
+    slot_alias: string;
+    scope?: string;
+}
+
 class UserAuthorizationUseCase {
 
+    private safewebapi = new Safewebapi();
+
     constructor(private authorizationRepository: IAuthorizationRepository) { }
+
 
     async execute(cpf: string): Promise<IResponse> {
 
@@ -18,42 +30,69 @@ class UserAuthorizationUseCase {
 
         const userAuthorized = await this.authorizationRepository.getAuthorization(cpf);
 
-        if (userAuthorized == undefined) { // Solicita autorização ??
+        if (userAuthorized == undefined || userAuthorized == null) { // Solicita autorização ??
             throw new AppError("Usuário não encontrado");
         }
 
-        const client_id = process.env.CLIENT_ID;
-        const client_secret = process.env.CLIENT_SECRET;
 
         if (userAuthorized.dta_cri_token != null && this.checkValidToken(userAuthorized.dta_cri_token)) {
             return { token: userAuthorized.access_token };
         }
 
         if (userAuthorized.expirationDate != null && this.verifyAuthorizationValidate(userAuthorized.expirationDate)) {
-            const password = userAuthorized.identifierCA + "SENHA DO CERTIFICADO DIGITAL ???";
 
-            const authorizationCredentials = await safewebapi.authorizationCredentialsHolder({ username: cpf, password });
+            const authorizationCredentials = await this.getCredentialsHolder(userAuthorized, cpf);
 
-            const { access_token, token_type, expires_in, scope, slot_alias } = authorizationCredentials;
-
-            if (access_token && token_type && expires_in && slot_alias) {
+            if (authorizationCredentials != null && authorizationCredentials != undefined) {
                 await this.authorizationRepository.updateAccessToken({ state: cpf, ...authorizationCredentials });
-                return { token: access_token };
+                return { token: authorizationCredentials.access_token };
             }
 
             throw new AppError("Erro ao solicitar um novo token, tente novamente.");
 
         }
 
-        const authorizationApplication = await safewebapi.confiableApplicationAuthorization({ client_id, cpf });
+        const body = {
+            client_id: process.env.CLIENT_ID,
+            login_hint: cpf,
+            state: cpf
+        }
 
-        if (authorizationApplication) {
+        const authorizationApplication = await this.safewebapi.executeRequest({
+            body,
+            method: "POST",
+            url: urlSafeWeb.AUTHORIZE_CA
+        });
+
+        if (authorizationApplication != null && authorizationApplication != undefined) {
             await this.authorizationRepository.inactiveAuthorization(cpf);
             await this.authorizationRepository.create(cpf);
             throw new AppError("token e autorização expirados, nova autorização solicitada. Verifique o seu aplicativo safeweb");
         }
 
         throw new AppError("token e autorização expirados, erro ao solicitar nova autorização.");
+    }
+
+    async getCredentialsHolder(userAuthorized: any, cpf: string): Promise<IResponseCredentialsHolder> {
+
+        const password = userAuthorized.identifierCA + "igualbad12";
+
+        const body = {
+            ...fixedCredentialsHolder,
+            client_id: process.env.CLIENT_ID,
+            client_secret: process.env.CLIENT_SECRET,
+            username: cpf,
+            password
+        }
+
+        const authorizationCredentials = await this.safewebapi.executeRequest({
+            method: "POST",
+            url: urlSafeWeb.PWD_AUTHORIZE,
+            body
+        });
+
+        return authorizationCredentials as IResponseCredentialsHolder;
+
     }
 
     checkValidToken(dta_cri_token: Date): boolean {
