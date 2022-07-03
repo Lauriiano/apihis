@@ -10,9 +10,9 @@ class UserAuthorizationController {
 
         const { cpf } = req.body;
 
-        const user = await this.userAuthorizationUseCase.execute(cpf);
+        const access_token = await this.userAuthorizationUseCase.execute(cpf);
 
-        return res.json(user);
+        return res.json(access_token);
 
     }
 

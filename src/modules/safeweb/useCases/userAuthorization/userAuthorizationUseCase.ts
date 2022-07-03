@@ -4,7 +4,7 @@ import { IAuthorizationRepository } from "../../repositories/implementations/IAu
 import { Safewebapi } from '../../requests/Safeweb.api';
 
 interface IResponse {
-    token: string;
+    access_token: string;
 }
 
 interface IResponseCredentialsHolder {
@@ -36,7 +36,7 @@ class UserAuthorizationUseCase {
 
 
         if (userAuthorized.dta_cri_token != null && this.checkValidToken(userAuthorized.dta_cri_token)) {
-            return { token: userAuthorized.access_token };
+            return { access_token: userAuthorized.access_token };
         }
 
         if (userAuthorized.expirationDate != null && this.verifyAuthorizationValidate(userAuthorized.expirationDate)) {
@@ -45,7 +45,7 @@ class UserAuthorizationUseCase {
 
             if (authorizationCredentials != null && authorizationCredentials != undefined) {
                 await this.authorizationRepository.updateAccessToken({ state: cpf, ...authorizationCredentials });
-                return { token: authorizationCredentials.access_token };
+                return { access_token: authorizationCredentials.access_token };
             }
 
             throw new AppError("Erro ao solicitar um novo token, tente novamente.");
