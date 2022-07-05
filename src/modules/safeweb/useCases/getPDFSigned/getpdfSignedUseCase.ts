@@ -35,7 +35,9 @@ class GetpdfSignedUseCase {
             throw new AppError("Erro interno de servidor, tente novamente");
         }
 
-        const stamp = await this.applySignatureStamp(id);
+        const stamp = await this.applySignatureStamp(id, prescriptionCoordinates[0]);
+
+        await this.applySignatureStamp(id, prescriptionCoordinates[1]);
 
         if (stamp == null || stamp == undefined) {
             throw new AppError("Erro interno de servidor, tente novamente");
@@ -71,13 +73,13 @@ class GetpdfSignedUseCase {
         return initialFlow.id as string;
     }
 
-    async applySignatureStamp(id: string): Promise<IResponseStamp | null> {
+    async applySignatureStamp(id: string, coordinates): Promise<IResponseStamp | null> {
 
         const body = {
             id,
             alias: "PRESCRIPTION OF MEDICINES",
             annotations: [{
-                ...prescriptionCoordinates,
+                ...coordinates,
                 "page": 1
             }]
         }

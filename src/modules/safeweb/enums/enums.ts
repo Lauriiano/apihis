@@ -12,12 +12,20 @@ const fixedCredentialsHolder = {
     grant_type: "password"
 }
 
-const prescriptionCoordinates = {
-    "x": 125.261064,
-    "y": 81.005527,
-    "width": 155.2387600,
-    "height": 77.6193800
-}
+const prescriptionCoordinates = [
+    {
+        "x": 234.261064,
+        "y": 122.005527,
+        "width": 155.2387600,
+        "height": 77.6193800
+    },
+    {
+        "x": 655.261064,
+        "y": 122.005527,
+        "width": 155.2387600,
+        "height": 77.6193800
+    }
+]
 
 export { urlSafeWeb, fixedCredentialsHolder, prescriptionCoordinates };
 
