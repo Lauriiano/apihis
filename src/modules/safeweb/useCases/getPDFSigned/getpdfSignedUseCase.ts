@@ -13,6 +13,13 @@ interface IResponseStamp {
     }]
 }
 
+interface ICoordinates {
+    "width": number,
+    "height": number,
+    "x": number,
+    "y": number
+}
+
 class GetpdfSignedUseCase {
 
     private safeWebapi: Safewebapi;
@@ -73,7 +80,7 @@ class GetpdfSignedUseCase {
         return initialFlow.id as string;
     }
 
-    async applySignatureStamp(id: string, coordinates): Promise<IResponseStamp | null> {
+    async applySignatureStamp(id: string, coordinates: ICoordinates): Promise<IResponseStamp | null> {
 
         const body = {
             id,

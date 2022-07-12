@@ -39,6 +39,10 @@ class UserAuthorizationUseCase {
             return { access_token: userAuthorized.access_token };
         }
 
+        if (userAuthorized.password === null) {
+            throw new AppError("Invalid Password");
+        }
+
         if (userAuthorized.expirationDate != null && this.verifyAuthorizationValidate(userAuthorized.expirationDate)) {
 
             const authorizationCredentials = await this.getCredentialsHolder(userAuthorized, cpf);
@@ -75,7 +79,7 @@ class UserAuthorizationUseCase {
 
     async getCredentialsHolder(userAuthorized: any, cpf: string): Promise<IResponseCredentialsHolder> {
 
-        const password = userAuthorized.identifierCA + "igualbad12";
+        const password = userAuthorized.identifierCA + userAuthorized.password;
 
         const body = {
             ...fixedCredentialsHolder,

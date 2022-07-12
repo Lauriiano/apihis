@@ -16,7 +16,7 @@ class Authorization {
     serialNumber: string;
     @Column({ nullable: true })
     dta_cri_token: Date;
-    @Column({ nullable: true })
+    @Column({ nullable: true, length: 350 })
     access_token: string;
     @Column({ nullable: true })
     expires_in: number;
@@ -26,6 +26,8 @@ class Authorization {
     status: number;
     @Column({ nullable: true })
     error: string;
+    @Column({ nullable: true })
+    password: string;
 }
 
 export { Authorization };

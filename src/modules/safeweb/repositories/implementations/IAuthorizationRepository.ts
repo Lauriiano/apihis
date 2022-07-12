@@ -11,6 +11,7 @@ interface IAuthorizationDTO {
     slot_alias: string | null;
     status: number;
     created_at: Date;
+    password: string;
 }
 
 interface IConfiableAuthorizationApplication {
@@ -29,6 +30,11 @@ interface IUpdateAccessToken {
     state: string;
 }
 
+interface IUpdatePass {
+    password: string;
+    cpf: string;
+}
+
 interface IAuthorizationRepository {
 
     create(cpf: string): Promise<void>;
@@ -37,7 +43,8 @@ interface IAuthorizationRepository {
     updateAuthorization({ identifierCA, state, expirationDate, serialNumber }: IConfiableAuthorizationApplication): Promise<Authorization>;
     updateAccessToken({ access_token, expires_in, token_type, slot_alias }: IUpdateAccessToken): Promise<IAuthorizationDTO>;
     inactiveAuthorization(state: string): Promise<IAuthorizationDTO>;
+    updatePassword({ password, cpf }: IUpdatePass): Promise<IAuthorizationDTO>;
 }
 
-export { IAuthorizationDTO, IAuthorizationRepository, IConfiableAuthorizationApplication, IUpdateAccessToken };
+export { IAuthorizationDTO, IAuthorizationRepository, IConfiableAuthorizationApplication, IUpdateAccessToken, IUpdatePass };
 

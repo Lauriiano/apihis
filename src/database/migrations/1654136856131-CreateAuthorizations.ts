@@ -19,6 +19,7 @@ export class CreateAuthorizations1654136856131 implements MigrationInterface {
                     { name: "slot_alias", type: "varchar", isNullable: true, default: null },
                     { name: "error", type: "varchar", isNullable: true, default: null },
                     { name: "status", type: "BIT", default: 1 },
+                    { name: "password", type: "varchar", isNullable: true, default: null }
                 ]
             })
         )

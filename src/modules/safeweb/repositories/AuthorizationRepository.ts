@@ -1,6 +1,6 @@
 import { getRepository, Repository } from "typeorm";
 import { Authorization } from "../entities/Authorization";
-import { IAuthorizationDTO, IAuthorizationRepository, IConfiableAuthorizationApplication, IUpdateAccessToken } from "./implementations/IAuthorizationRepository";
+import { IAuthorizationDTO, IAuthorizationRepository, IConfiableAuthorizationApplication, IUpdateAccessToken, IUpdatePass } from "./implementations/IAuthorizationRepository";
 
 
 
@@ -68,6 +68,18 @@ class AuthorizationRepository implements IAuthorizationRepository {
         const authorization = await this.repository.query(query);
 
         authorization.status = 0;
+
+        const authorizationUpdated = await this.repository.save(authorization);
+
+        return authorizationUpdated;
+    }
+
+    async updatePassword({ password, cpf }: IUpdatePass): Promise<IAuthorizationDTO> {
+        const getAuthorization = await this.repository.find({ where: { state: cpf, status: 1 } });
+
+        const authorization = getAuthorization[0];
+
+        authorization.password = password;
 
         const authorizationUpdated = await this.repository.save(authorization);
 
