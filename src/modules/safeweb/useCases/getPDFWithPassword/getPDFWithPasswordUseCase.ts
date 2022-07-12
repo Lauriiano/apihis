@@ -30,7 +30,7 @@ class GetpdfWithPasswordUseCase {
 
         const userAuthorized = await this.authorizationRepository.getAuthorization(cpf);
 
-        if (userAuthorized.identifierCA === null || this.verifyAuthorizationValidate(userAuthorized.expirationDate)) {
+        if (userAuthorized.identifierCA === null || !this.verifyAuthorizationValidate(userAuthorized.expirationDate)) {
             throw new AppError("Aplicação não autorizada ou expirada, verifique seu aplicativo safeID");
         }
 
@@ -42,7 +42,7 @@ class GetpdfWithPasswordUseCase {
             throw new AppError("Erro ao solicitar token, tente novamente");
         }
 
-        const pdfSigned = this.getpdfSignedUseCase.execute({
+        const pdfSigned = await this.getpdfSignedUseCase.execute({
             token: reqToken.access_token,
             content: pdfNotSigned
         });
