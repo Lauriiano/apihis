@@ -30,8 +30,12 @@ class UserAuthorizationUseCase {
 
         const userAuthorized = await this.authorizationRepository.getAuthorization(cpf);
 
-        if (userAuthorized == undefined || userAuthorized == null) { // Solicita autorização ??
-            throw new AppError("Usuário não encontrado");
+        if (userAuthorized == undefined || userAuthorized == null) {
+            const authorizationApplication = await this.getAuthorizationApplication(cpf);
+            if (authorizationApplication != null && authorizationApplication != undefined) {
+                throw new AppError("Autorização solicitada, verifique seu aplicativo SafeID");
+            }
+            throw new AppError("Usuário não encontrado, erro ao solicitar autorização");
         }
 
 
@@ -56,17 +60,7 @@ class UserAuthorizationUseCase {
 
         }
 
-        const body = {
-            client_id: process.env.CLIENT_ID,
-            login_hint: cpf,
-            state: cpf
-        }
-
-        const authorizationApplication = await this.safewebapi.executeRequest({
-            body,
-            method: "POST",
-            url: urlSafeWeb.AUTHORIZE_CA
-        });
+        const authorizationApplication = await this.getAuthorizationApplication(cpf);
 
         if (authorizationApplication != null && authorizationApplication != undefined) {
             await this.authorizationRepository.inactiveAuthorization(cpf);
@@ -97,6 +91,20 @@ class UserAuthorizationUseCase {
 
         return authorizationCredentials as IResponseCredentialsHolder;
 
+    }
+
+    async getAuthorizationApplication(cpf: string) {
+        const body = {
+            client_id: process.env.CLIENT_ID,
+            login_hint: cpf,
+            state: cpf
+        }
+
+        const authorizationApplication = await this.safewebapi.executeRequest({
+            body,
+            method: "POST",
+            url: urlSafeWeb.AUTHORIZE_CA
+        });
     }
 
     checkValidToken(dta_cri_token: Date): boolean {
